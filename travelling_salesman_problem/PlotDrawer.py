@@ -4,7 +4,9 @@ import matplotlib.pyplot as plt
 #TODO: test if algorithm gives proper results!
 class PlotDrawer:
 
-  def __init__(self, cities = None, times = None):
+  def __init__(self, cities = None, times = None, title=''):
+    self.title = title
+
     if not(cities == None):
       self.cities = cities
       self.draw_cities_plot()
@@ -29,5 +31,5 @@ class PlotDrawer:
     max_value = max(self.times)
     plt.axis([0, no_x_values + 1, 0, max_value + max_value / 4.0 ])
     for i in range(0, no_x_values):
-      plt.bar(i, self.times[i], width=0.25, align='edge')ąą
+      plt.bar(i, self.times[i], width=0.25, align='edge')
     plt.show()

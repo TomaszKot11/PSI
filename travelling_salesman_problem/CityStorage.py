@@ -32,6 +32,10 @@ class CityStorage:
     y_diff = city_one_c[1] - city_two_c[1]
     return math.sqrt((x_diff ** 2) + (y_diff ** 2))
 
+  def calculate_total_distance_for_given_cities(self, given_cities):
+    # for i in given_cities:
+    raise NotImplementedError('Not implemented method called')
+
   def get_city_coordinates(self, city_index):
     return (self.cities[city_index][1], self.cities[city_index][2])
 
