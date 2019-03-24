@@ -18,6 +18,7 @@ class DfsBruteForce(Algorithm):
     for i in range(0, self.city_storage.number_cities):
       # generate paths
       new_path = self.dfs(i)
+      new_path.append(new_path[0])
       paths.append(new_path)
       weights.append(self.city_storage.get_total_weight_for_path(new_path))
 

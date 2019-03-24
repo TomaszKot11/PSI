@@ -1,5 +1,4 @@
 from CityStorage import CityStorage
-# from BruteForce import BruteForce
 from PlotDrawer import PlotDrawer
 from NNAlgorithm import NNAlgorithm
 from BfsBruteForce import BfsBruteForce
@@ -64,18 +63,7 @@ nn_algorithm = NNAlgorithm(first_city_storage)
 nn_algorithm_result = nn_algorithm.perform()
 print_result(nn_algorithm_result)
 
-# print('---------')
-# print('---------')
-# print('---------')
-# print('time: ' + str(nn_algorithm_result['time']))
-# print('reuslt: ' + str(nn_algorithm_result['cities']))
-# print('---------')
-# print('---------')
-# print('---------')
-
-# PlotDrawer(cities = result['cities'], title = 'Brute force algorithm')
-# PlotDrawer(cities = nn_algorithm_result['cities'], title = 'Brute force algorithm')
-
-
-
-# PlotDrawer(times = [ result['time'] ])
+PlotDrawer(city_storage = first_city_storage, cities = dfs_result['cities'], title = 'Brute force DFS algorithm')
+PlotDrawer(city_storage = first_city_storage, cities = bfs_result['cities'], title = 'Brute force BFS algorithm')
+PlotDrawer(city_storage = first_city_storage, cities = ordinary_brute_result['cities'], title = 'Ordinary brute force')
+PlotDrawer(city_storage = first_city_storage, cities = nn_algorithm_result['cities'], title = 'NN algorithm')
