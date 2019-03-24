@@ -4,6 +4,7 @@ from NNAlgorithm import NNAlgorithm
 from BfsBruteForce import BfsBruteForce
 from DfsBruteForce import DfsBruteForce
 from OrdinaryBruteForce import OrdinaryBruteForce
+from AAsteriskAlgorithm import AAsteriskAlgorithm
 
 # city_storage = CityStorage(7)
 
@@ -63,7 +64,13 @@ nn_algorithm = NNAlgorithm(first_city_storage)
 nn_algorithm_result = nn_algorithm.perform()
 print_result(nn_algorithm_result)
 
+print('A* algorithm:')
+aa_algorithm = AAsteriskAlgorithm(first_city_storage)
+aa_algorithm_result = aa_algorithm.perform()
+print_result(aa_algorithm_result)
+
 PlotDrawer(city_storage = first_city_storage, cities = dfs_result['cities'], title = 'Brute force DFS algorithm')
 PlotDrawer(city_storage = first_city_storage, cities = bfs_result['cities'], title = 'Brute force BFS algorithm')
 PlotDrawer(city_storage = first_city_storage, cities = ordinary_brute_result['cities'], title = 'Ordinary brute force')
 PlotDrawer(city_storage = first_city_storage, cities = nn_algorithm_result['cities'], title = 'NN algorithm')
+PlotDrawer(city_storage = first_city_storage, cities = aa_algorithm_result['cities'], title = 'A* algorithm')
