@@ -2,6 +2,7 @@ from Algorithm import Algorithm
 from CityStorage import CityStorage
 import numpy as np
 import itertools
+import time
 
 # pip install numpy
 # iterates throug all
@@ -11,6 +12,8 @@ class BruteForce(Algorithm):
     self.city_storage = city_storage
 
   def perform(self):
+    start_time = time.time()
+
     cities_as_list = self.city_storage.cities_as_list()
     all_permutations = list(itertools.permutations(cities_as_list))
 
@@ -42,4 +45,6 @@ class BruteForce(Algorithm):
     min_val = min(distances_list)
     min_val_index = distances_list.index(min_val)
 
-    return { 'weight': min_val, 'cities': list(all_permutations)[min_val_index] }
+    end_time = time.time()
+
+    return { 'weight': min_val, 'cities': list(all_permutations)[min_val_index], 'time': (end_time - start_time) }

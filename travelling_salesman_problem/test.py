@@ -42,7 +42,8 @@ for key, value in result.items():
   print(str(key) + ' ' + str(value))
 
 
-PlotDrawer(result['cities'])
+PlotDrawer(cities = result['cities'])
+PlotDrawer(times = [ result['time'] ])
 
 
 
