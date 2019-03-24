@@ -32,9 +32,12 @@ class CityStorage:
     y_diff = city_one_c[1] - city_two_c[1]
     return math.sqrt((x_diff ** 2) + (y_diff ** 2))
 
-  def calculate_total_distance_for_given_cities(self, given_cities):
-    # for i in given_cities:
-    raise NotImplementedError('Not implemented method called')
+  def get_total_weight_for_path(self, path):
+    temp = []
+    for i in range(0, len(path) - 1):
+      distance = self.calculate_distance_using_indexes(path[i], path[i+1])
+      temp.append(distance)
+    return sum(temp)
 
   def get_city_coordinates(self, city_index):
     return (self.cities[city_index][1], self.cities[city_index][2])
