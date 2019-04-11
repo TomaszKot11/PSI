@@ -1,135 +1,106 @@
-import numpy as np
-from itertools import compress
+import random
 
 class GeneticAlgorithm:
 
-  def __init__(self, population_size = 8, mutation_rate = 0.001, chromosome_length = 7):
+  def __init__(self, population_size = 8, mutation_rate = 0.001, number_iterations = 1000):
     self.population_size = population_size
-    self.mutation_rate = mutation_rate
-    self.chromosome_length = chromosome_length
+    self.number_iterations = number_iterations
+    self.mutation_rate = number_iterations
 
-  def perform(self, iterations = 1):
-    self.generate_initial_population()
-    self.update_fitness_vector()
-
-    for i in range(iterations):
-      # generate parents
-      parent_pairs = self.select_parents()
-      # generate children
-      children = np.array([ self.generate_children(parent_pair) for parent_pair in parent_pairs ])
-
-      mutated_children = [self.mutate(child) for child in children]
-      self.population = np.array(mutated_children)
-      self.update_fitness_vector()
-      self.print_new_population_info(i)
-
-  # selects parents for the next generation
-  def select_parents(self):
-    relative_fitness = np.array(self.population_fitness_vector) / np.sum(self.population_fitness_vector)
-    parents = []
-    # generates parents pairs
+  # generates initial population
+  def generate_initial_population(self, genes):
     for i in range(self.population_size):
-      parents.append([self.weighted_random_choice(), self.weighted_random_choice()])
+      genes.append('{0:08b}'.format(random.randint(1, 128)))
 
-    return np.array(parents)
+  def calculate_fitness_function(self, x):
+    value = int(x, 2)
 
-
-  # (helper function for select_parents) roulette wheel of selection parents
-  # TODO: this is propably wrong
-  def weighted_random_choice(self):
-    max = np.sum(self.population_fitness_vector)
-    pick = np.random.uniform(0, max)
-    current = 0
-    for idx, chromosome in enumerate(self.population):
-        current += self.population_fitness_vector[idx]
-        if current > pick:
-            return chromosome
-
-  # generates the children genome using randomly
-  # generate locus from two parents
-  def generate_children(self, parent_pair):
-    parent_first = parent_pair[0]
-    parent_second = parent_pair[1]
-    # single point crossover
-    # but random locus
-    locus_index = np.random.randint(0, self.chromosome_length)
-    parent_second_last_index = len(parent_second)
-
-    return np.array(parent_first[0:locus_index].tolist() +  parent_second[locus_index:parent_second_last_index].tolist())
-
-  # prints the current population info
-  def print_new_population_info(self, population_no):
-    print('----------')
-    print('The population number: ' + str(population_no + 1))
-    print('----------')
-    print(self.population)
-    # print(self.population_fitness_vector)
-    print('The greatest value: ' + str(self.get_the_best_genome_value()) + ' for chromosome: ' + str(self.get_best_genome()))
-    print('----------')
-
-  # mutates the genes randomly in the child
-  def mutate(self, chromosome):
-    chromosome = np.array(chromosome)
-    random_value = np.random.rand(self.chromosome_length)
-    # see which genes to mutate
-
-    boolean_mutation_values = random_value < self.mutation_rate
-    chromosome[boolean_mutation_values] = [ self.bit_invert(value) for value in chromosome[boolean_mutation_values]]
-
-    return chromosome
-
-    # helper function for inverting bits
-  def bit_invert(self, value):
-    if value == '1':
-      return '0'
-    else:
-      return '1'
-
-  # generates the random initial population
-  def generate_initial_population(self):
-    self.population = []
-    for i in range(0, self.population_size):
-      random_values = np.random.randint(2, size = self.chromosome_length)
-      self.population.append(random_values)
-
-    self.population = np.array(self.population)
-
-    return self.population
-
-  # updates the fitness_vector for current population
-  def update_fitness_vector(self):
-    self.population_fitness_vector = []
-    for i in self.population:
-      value = self.convert_binary_array_to_string(i)
-
-      self.population_fitness_vector.append(self.calculate_fitness_function(int(value, 2)))
-
-  #TODO: get rid of thi
-  def convert_binary_array_to_string(self, array):
-    value = ''
-    for j in array:
-      value += str(j)
-
-    return value
-
-  # calculates the fitness function
-  def calculate_fitness_function(self, value):
     return 2*(value**2 + 1)
 
-  # get the best genome foor current population
-  def get_best_genome(self):
-    # print('Inside get the best genome: ')
-    the_greates_value = self.get_the_best_genome_value()
-    # print('-------')
-    # for t in self.population:
-    #   print(t)
-    #   print(self.convert_binary_array_to_string(t))
-    #   print(str(self.calculate_fitness_function(int(self.convert_binary_array_to_string(t), 2))))
-    # print('Inside the best genome: ')
-    array_to_return = [ t for t in self.population if str(the_greates_value) == str(self.calculate_fitness_function(int(self.convert_binary_array_to_string(t), 2)))]
+  def roulette_fitness_sum(self, genes):
+    sum = 0
+    for x in genes:
+      sum += self.calculate_fitness_function(x)
 
-    return np.array(array_to_return)[0]
+    return sum
 
-  # gets the best value for current population
-  def get_the_best_genome_value(self):
-    return max(self.population_fitness_vector)
+  def roulette_probability_for_gene(self, x, sum):
+    return self.calculate_fitness_function(x) / sum
+
+  def select_parents(self, genes):
+    roulette = []
+    sum = self.roulette_fitness_sum(genes)
+    roulette.append(self.roulette_probability_for_gene(genes[0], sum))
+    for i in range(1, len(genes)):
+      roulette.append(self.roulette_probability_for_gene(genes[i], sum))
+      roulette[i] += roulette[i-1]
+    parent_genes = []
+    for i in range(0, len(genes)):
+      parent_genes.append(genes[self.get_chosen_gene_index(roulette)])
+
+    return parent_genes
+
+  def get_chosen_gene_index(self, roulette):
+    val = random.random()
+    index = 0
+    for i in range(0, len(roulette)):
+      if val < float(roulette[i]):
+        return i
+    return index
+
+  def crosover_genes(self, genes):
+    random.shuffle(genes)
+    crossed_genes=[]
+    for i in range(0,len(genes),2):
+      locus=random.randint(0,len(genes[0]))
+      crossed_genes.append(self.combine_genes(genes[i+1],genes[i],locus))
+      crossed_genes.append(self.combine_genes(genes[i],genes[i+1],locus))
+
+    return crossed_genes
+
+  def combine_genes(self, parent_first, parent_second, locus):
+    crossed_gene = parent_first[:locus] + parent_second[locus:]
+
+    return crossed_gene
+
+  def mutate_genes(self, genes):
+    mutated_genes = []
+    for x in genes:
+      mutated_genes.append(self.mutate_gen(x))
+
+    return mutated_genes
+
+  def mutate_gen(self, gen):
+    if random.random() < self.mutation_rate:
+      locus = random.randint(0, len(gen) - 1)
+      temp = list(gen)
+      temp[locus] = '0' if temp[locus] == '1' else '1'
+      return ''.join(temp)
+    return gen
+
+  def print_population_information(self, genes):
+    print('For genes: ' + str(genes))
+    print('Max value is: ' + str(self.get_max_value_for_population(genes)))
+
+  def get_max_value_for_population(self, genes):
+    temp_array = []
+    for x in genes:
+      temp_array.append(self.calculate_fitness_function(x))
+
+    return max(temp_array)
+
+
+  def perform(self):
+    all_genes=[]
+    for i in range(1,128):
+      all_genes.append(i)
+    genes=[]
+    for i in range(0, self.population_size):
+      genes.append("{:08b}".format(all_genes.pop(random.randint(0, len(all_genes)))))
+
+
+    for i in range(self.number_iterations):
+      genes = self.select_parents(genes)
+      genes = self.crosover_genes(genes)
+      genes = self.mutate_genes(genes)
+      self.print_population_information(genes)
