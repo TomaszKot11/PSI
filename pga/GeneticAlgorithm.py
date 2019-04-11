@@ -17,17 +17,20 @@ class GeneticAlgorithm:
 
     return self.population
 
-  def get_fitness_vector(self):
-    self.population_vector = []
+  def update_fitness_vector(self):
+    self.population_fitness_vector = []
     for i in self.population:
       value = ''
       for j in i:
         value += str(j)
-      self.population_vector.append(self.calculate_fitness_function(int(value, 2)))
+      self.population_fitness_vector.append(self.calculate_fitness_function(int(value, 2)))
 
   def calculate_fitness_function(self, value):
     return 2*(value**2 + 1)
 
+  def get_best_genome(self):
+    self.best_genome_index = self.population_fitness_vector.index(max(self.population_fitness_vector))
+
   def perform(self):
     self.generate_initial_population()
-    self.get_fitness_vector()
+    self.update_fitness_vector()
