@@ -3,7 +3,7 @@ from itertools import compress
 
 class GeneticAlgorithm:
 
-  def __init__(self, population_size = 8, mutation_rate = 0.25, chromosome_length = 7):
+  def __init__(self, population_size = 8, mutation_rate = 0.001, chromosome_length = 7):
     self.population_size = population_size
     self.mutation_rate = mutation_rate
     self.chromosome_length = chromosome_length
@@ -18,9 +18,9 @@ class GeneticAlgorithm:
       # generate children
       children = np.array([ self.generate_children(parent_pair) for parent_pair in parent_pairs ])
 
-      mutated_children = [self.mutate(child, self.mutation_rate) for child in children]
+      mutated_children = [self.mutate(child) for child in children]
       self.population = np.array(mutated_children)
-      self.update_fitness_vector
+      self.update_fitness_vector()
       self.print_new_population_info(i)
 
   # selects parents for the next generation
@@ -35,6 +35,7 @@ class GeneticAlgorithm:
 
 
   # (helper function for select_parents) roulette wheel of selection parents
+  # TODO: this is propably wrong
   def weighted_random_choice(self):
     max = np.sum(self.population_fitness_vector)
     pick = np.random.uniform(0, max)
@@ -61,14 +62,17 @@ class GeneticAlgorithm:
     print('----------')
     print('The population number: ' + str(population_no + 1))
     print('----------')
+    print(self.population)
+    # print(self.population_fitness_vector)
     print('The greatest value: ' + str(self.get_the_best_genome_value()) + ' for chromosome: ' + str(self.get_best_genome()))
     print('----------')
 
   # mutates the genes randomly in the child
-  def mutate(self, chromosome, mutation_rate):
+  def mutate(self, chromosome):
     chromosome = np.array(chromosome)
     random_value = np.random.rand(self.chromosome_length)
     # see which genes to mutate
+
     boolean_mutation_values = random_value < self.mutation_rate
     chromosome[boolean_mutation_values] = [ self.bit_invert(value) for value in chromosome[boolean_mutation_values]]
 
@@ -82,10 +86,10 @@ class GeneticAlgorithm:
       return '1'
 
   # generates the random initial population
-  def generate_initial_population(self, chromosome_length = 7):
+  def generate_initial_population(self):
     self.population = []
     for i in range(0, self.population_size):
-      random_values = np.random.randint(2, size = chromosome_length)
+      random_values = np.random.randint(2, size = self.chromosome_length)
       self.population.append(random_values)
 
     self.population = np.array(self.population)
@@ -96,10 +100,17 @@ class GeneticAlgorithm:
   def update_fitness_vector(self):
     self.population_fitness_vector = []
     for i in self.population:
-      value = ''
-      for j in i:
-        value += str(j)
+      value = self.convert_binary_array_to_string(i)
+
       self.population_fitness_vector.append(self.calculate_fitness_function(int(value, 2)))
+
+  #TODO: get rid of thi
+  def convert_binary_array_to_string(self, array):
+    value = ''
+    for j in array:
+      value += str(j)
+
+    return value
 
   # calculates the fitness function
   def calculate_fitness_function(self, value):
@@ -107,9 +118,17 @@ class GeneticAlgorithm:
 
   # get the best genome foor current population
   def get_best_genome(self):
-    best_genome_index = self.population_fitness_vector.index(max(self.population_fitness_vector))
+    # print('Inside get the best genome: ')
+    the_greates_value = self.get_the_best_genome_value()
+    # print('-------')
+    # for t in self.population:
+    #   print(t)
+    #   print(self.convert_binary_array_to_string(t))
+    #   print(str(self.calculate_fitness_function(int(self.convert_binary_array_to_string(t), 2))))
+    # print('Inside the best genome: ')
+    array_to_return = [ t for t in self.population if str(the_greates_value) == str(self.calculate_fitness_function(int(self.convert_binary_array_to_string(t), 2)))]
 
-    return self.population[best_genome_index]
+    return np.array(array_to_return)[0]
 
   # gets the best value for current population
   def get_the_best_genome_value(self):
