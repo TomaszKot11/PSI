@@ -10,7 +10,7 @@ class NNAlgorithm(Algorithm):
   def perform(self):
     start_time = time.time()
     all_visited = []
-    for i in range(0, self.city_storage.number_cities):
+    for i in range(self.city_storage.number_cities):
       new_arr = list(map(lambda x: x[0], self.perform_nn_with_starting(i)))
       all_visited.append(new_arr)
 

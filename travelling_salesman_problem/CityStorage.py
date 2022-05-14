@@ -18,9 +18,9 @@ class CityStorage:
     return cls(citiesCount, True, cities)
 
   def generate_cities(self):
-    self.cities = []
-    for i in range(0, self.number_cities):
-      self.cities.append([ i, self.get_random_in_range(), self.get_random_in_range() ])
+    self.cities = [[i, self.get_random_in_range(),
+                    self.get_random_in_range()]
+                   for i in range(self.number_cities)]
 
   def get_random_in_range(self):
     return randint(0, 100)
@@ -34,7 +34,7 @@ class CityStorage:
 
   def get_total_weight_for_path(self, path):
     temp = []
-    for i in range(0, len(path) - 1):
+    for i in range(len(path) - 1):
       distance = self.calculate_distance_using_indexes(path[i], path[i+1])
       temp.append(distance)
     return sum(temp)

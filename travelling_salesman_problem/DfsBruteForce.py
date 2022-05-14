@@ -15,7 +15,7 @@ class DfsBruteForce(Algorithm):
     start_time = time.time()
     paths = []
     weights = []
-    for i in range(0, self.city_storage.number_cities):
+    for i in range(self.city_storage.number_cities):
       # generate paths
       new_path = self.dfs(i)
       new_path.append(new_path[0])
@@ -32,10 +32,10 @@ class DfsBruteForce(Algorithm):
   # dfs for completee graph
   def dfs(self, starting_node):
     # prepare the graph
-    graph = {}
-    for i in range(0, self.city_storage.number_cities):
-      graph[i] = self.generate_sorted_range(i, self.city_storage.number_cities)
-
+    graph = {
+        i: self.generate_sorted_range(i, self.city_storage.number_cities)
+        for i in range(self.city_storage.number_cities)
+    }
     return self.core_dfs(graph, starting_node)
 
   def core_dfs(self, graph, start):
@@ -49,11 +49,7 @@ class DfsBruteForce(Algorithm):
 
 
   def generate_sorted_range(self, current_node, total_number):
-    temp = []
-    for i in range(0, total_number):
-      if i == current_node:
-        continue
-      temp.append(i)
+    temp = [i for i in range(total_number) if i != current_node]
     # return set(temp.sort())
     return set(temp)
 

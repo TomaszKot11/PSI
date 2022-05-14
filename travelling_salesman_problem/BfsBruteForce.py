@@ -14,7 +14,7 @@ class BfsBruteForce(Algorithm):
     start_time = time.time()
     paths = []
     weights = []
-    for i in range(0, self.city_storage.number_cities):
+    for i in range(self.city_storage.number_cities):
       # generate paths
       new_path = self.bfs(i)
       paths.append(new_path)
@@ -30,8 +30,8 @@ class BfsBruteForce(Algorithm):
 
   def bfs(self, starting_node):
     visited = [ starting_node ]
-    while(len(visited) < self.city_storage.number_cities):
-      for i in range(0, self.city_storage.number_cities):
+    while (len(visited) < self.city_storage.number_cities):
+      for i in range(self.city_storage.number_cities):
         # skip the starting node
         if i == starting_node:
           continue

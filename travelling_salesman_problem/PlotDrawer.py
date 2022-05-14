@@ -9,16 +9,16 @@ class PlotDrawer:
   def __init__(self, city_storage = None, cities = None, times = None, title=''):
     self.title = title
     self.city_storage = city_storage
-    if not(cities == None):
+    if cities is not None:
       self.cities = cities
       self.draw_cities_plot()
-    elif not(times == None):
+    elif times is not None:
       self.times = times
       self.draw_time_plot()
 
   def draw_cities_plot(self):
     all_cities = self.city_storage.cities
-    for i in range(0, self.city_storage.number_cities):
+    for i in range(self.city_storage.number_cities):
       first_city = all_cities[self.cities[i]]
       second_city = all_cities[self.cities[i + 1]]
       plt.plot([first_city[1], second_city[1]], [first_city[2], second_city[2]])
@@ -30,17 +30,17 @@ class PlotDrawer:
     plt.suptitle(self.title)
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    plt.savefig(st+'plot.png')
+    plt.savefig(f'{st}plot.png')
     plt.show()
 
   def draw_time_plot(self):
     no_x_values = len(self.times)
     max_value = max(self.times)
     plt.axis([0, no_x_values + 1, 0, max_value + max_value / 4.0 ])
-    for i in range(0, no_x_values):
+    for i in range(no_x_values):
       plt.bar(i, self.times[i], width=0.25, align='edge')
     plt.suptitle(self.title)
     ts = time.time()
     st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-    plt.savefig(st + 'table.png')
+    plt.savefig(f'{st}table.png')
     plt.show()
