@@ -12,7 +12,7 @@ class AAsteriskAlgorithm(Algorithm):
     start_time = time.time()
     paths = []
     weights = []
-    for i in range(0, self.city_storage.number_cities):
+    for i in range(self.city_storage.number_cities):
       next_path = self.perform_a_star_algorithm(i)
       # append current node
       next_path.append(i)

@@ -16,7 +16,7 @@ from AAsteriskAlgorithm import AAsteriskAlgorithm
 
 def print_result(result):
   for key, value in result.items():
-    print(str(key) + ' ' + str(value))
+    print(f'{str(key)} {str(value)}')
 
 def perform_sample_algorithm(first_city_storage):
   bfs_algorithm = BfsBruteForce(first_city_storage)
